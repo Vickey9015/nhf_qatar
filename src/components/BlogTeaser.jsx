@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom";
-import { posts } from "../catalog";
+import { useSite } from "../site-context";
 
 export default function BlogTeaser() {
+  const { posts } = useSite();
+
   return (
     <section className="home-blog">
       <div className="container">

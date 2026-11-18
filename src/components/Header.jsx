@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import { company, nav } from "../config";
+import { nav } from "../config";
+import { useSite } from "../site-context";
 
 function SocialIcon({ name }) {
   if (name === "Instagram") {
@@ -86,6 +87,7 @@ function MenuLink({ href, className, children, onClick, end }) {
 }
 
 export default function Header() {
+  const { company } = useSite();
   const [open, setOpen] = useState(false);
   const [dropped, setDropped] = useState(null);
   const { pathname } = useLocation();
@@ -137,7 +139,7 @@ export default function Header() {
     <header className="site-header" id="top">
       <div className="topbar">
         <div className="container topbar-inner">
-          <p className="topbar-note">24/7 Pest Control Across Doha Qatar</p>
+          <p className="topbar-note">{company.topNote}</p>
           <div className="topbar-contacts">
             <p className="topbar-phone">
               <span className="topbar-label">Booking &amp; Enquiry:</span>

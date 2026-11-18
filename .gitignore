@@ -12,6 +12,13 @@ dist
 dist-ssr
 *.local
 
+public/data/db.php
+public/data/auth.json
+public/data/rate.json
+public/data/enquiries.json
+public/images/uploads/*
+!public/images/uploads/.htaccess
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

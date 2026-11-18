@@ -1,4 +1,5 @@
-import { company, industries, pests } from "../config";
+import { industries, pests } from "../config";
+import { useSite } from "../site-context";
 
 const year = new Date().getFullYear();
 
@@ -10,6 +11,8 @@ const menu = [
 ];
 
 export default function Footer() {
+  const { company } = useSite();
+
   return (
     <footer className="site-footer">
       <div className="container footer-grid">

@@ -24,7 +24,7 @@ export const pests = [
   {
     id: "cockroaches",
     name: "Cockroaches",
-    menu: "Cockroach Pest Control",
+    menu: "Cockroach Control",
     icon: "cockroach",
     image: "/images/pest-cockroach.jpg",
     blurb: "Kitchens, drains, and the gaps behind fittings.",
@@ -32,7 +32,7 @@ export const pests = [
   {
     id: "bed-bugs",
     name: "Bed bugs",
-    menu: "Bed-Bugs Pest Control",
+    menu: "Bed Bug Treatment",
     icon: "bedbug",
     image: "/images/pest-bedbug.jpg",
     blurb: "Mattresses, headboards, and hotel guest rooms.",
@@ -40,7 +40,7 @@ export const pests = [
   {
     id: "rodents",
     name: "Rodents",
-    menu: "Rodent Pest Control",
+    menu: "Rat & Rodent Control",
     icon: "rodent",
     image: "/images/pest-rodent.jpg",
     blurb: "Mice and rats around stores, roofs, and plant rooms.",
@@ -64,7 +64,7 @@ export const pests = [
   {
     id: "termites",
     name: "Termites",
-    menu: "Termite Pest Control",
+    menu: "Termite Control",
     icon: "termite",
     image: "/images/pest-termite.jpg",
     blurb: "Timber, door frames, and hidden structural damage.",
@@ -72,7 +72,7 @@ export const pests = [
   {
     id: "birds",
     name: "Birds",
-    menu: "Birds Management",
+    menu: "Bird Control",
     icon: "bird",
     image: "/images/pest-bird.jpg",
     blurb: "Roosting on ledges, signage, and warehouse roofs.",
@@ -146,7 +146,7 @@ export const solutions = [
   },
   {
     id: "hygiene",
-    title: "Disinfection & sanitization",
+    title: "Disinfection & Sanitization",
     href: "/services#residential-disinfection",
     image: "/images/solution-disinfect.jpg",
     text: "A surface treatment for homes and workplaces, on its own or with the pest visit.",

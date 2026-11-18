@@ -1,6 +1,6 @@
-import { company } from "../config";
-
-const whatsappHref = `https://wa.me/${company.phoneHref.replace(/\D/g, "")}`;
+import { useState } from "react";
+import { propertyOptions, serviceOptions } from "../config";
+import { useSite } from "../site-context";
 
 function PhoneIcon() {
   return (
@@ -56,6 +56,41 @@ function WhatsAppIcon() {
 }
 
 export default function Contact() {
+  const { company } = useSite();
+  const [status, setStatus] = useState("idle");
+  const [error, setError] = useState("");
+  const whatsappHref = `https://wa.me/${company.phoneHref.replace(/\D/g, "")}`;
+
+  async function send(event) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const data = new FormData(form);
+    if (data.get("website")) return;
+    setStatus("sending");
+    setError("");
+    try {
+      const response = await fetch("/api/enquiries.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: data.get("name"),
+          phone: data.get("phone"),
+          email: data.get("email"),
+          property: data.get("property"),
+          service: data.get("service"),
+          message: data.get("message"),
+        }),
+      });
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(body.error || "The message could not be sent.");
+      form.reset();
+      setStatus("sent");
+    } catch (reason) {
+      setStatus("error");
+      setError(reason.message);
+    }
+  }
+
   return (
     <section className="section reach" id="contact">
       <div className="container">
@@ -98,7 +133,7 @@ export default function Contact() {
               <ClockIcon />
             </span>
             <h2>Hours</h2>
-            <p>24/7 across Doha</p>
+            <p>{company.hours}</p>
           </article>
         </div>
 
@@ -122,6 +157,59 @@ export default function Contact() {
                 Email
               </a>
             </div>
+            {status === "sent" ? (
+              <p className="form-status">Message received. We will get back to you.</p>
+            ) : (
+              <form className="contact-form reach-form" onSubmit={send}>
+                <h2>Send a message</h2>
+                <div className="field-row">
+                  <label>
+                    Name
+                    <input name="name" autoComplete="name" required />
+                  </label>
+                  <label>
+                    Phone
+                    <input name="phone" autoComplete="tel" required />
+                  </label>
+                </div>
+                <label>
+                  Email <span className="optional">(optional)</span>
+                  <input name="email" type="email" autoComplete="email" />
+                </label>
+                <div className="field-row">
+                  <label>
+                    Property
+                    <select name="property" defaultValue={propertyOptions[0]}>
+                      {propertyOptions.map((option) => (
+                        <option key={option}>{option}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <label>
+                    Service
+                    <select name="service" defaultValue={serviceOptions[0]}>
+                      {serviceOptions.map((option) => (
+                        <option key={option}>{option}</option>
+                      ))}
+                    </select>
+                  </label>
+                </div>
+                <label>
+                  Message
+                  <textarea name="message" rows={5} required />
+                </label>
+                <label className="hp-field" aria-hidden="true">
+                  Website
+                  <input name="website" tabIndex={-1} autoComplete="off" />
+                </label>
+                {status === "error" ? <p className="form-error">{error}</p> : null}
+                <div className="reach-submit">
+                  <button className="btn btn-green" type="submit" disabled={status === "sending"}>
+                    {status === "sending" ? "Sending…" : "Send message"}
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
       </div>
     </section>

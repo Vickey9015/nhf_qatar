@@ -1,12 +1,15 @@
 import { Link, useParams } from "react-router-dom";
-import { formatPostDate, posts } from "../catalog";
+import { formatPostDate } from "../catalog";
 import { PageBanner, PageCta } from "../components/PageFrame";
+import { useSite } from "../site-context";
 import NotFoundPage from "./NotFoundPage";
 
 export default function BlogPostPage() {
   const { slug } = useParams();
+  const { posts, postsReady } = useSite();
   const post = posts.find((item) => item.slug === slug);
 
+  if (!post && !postsReady) return null;
   if (!post) return <NotFoundPage />;
 
   return (

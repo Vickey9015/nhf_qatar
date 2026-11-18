@@ -13,7 +13,9 @@ import BlogPage from "./pages/BlogPage";
 import BlogPostPage from "./pages/BlogPostPage";
 import ServicesPage from "./pages/ServicesPage";
 import ContactPage from "./pages/ContactPage";
+import AdminPage from "./pages/AdminPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import { SiteProvider } from "./site";
 
 function ScrollToTop() {
   const { pathname, hash } = useLocation();
@@ -33,8 +35,21 @@ function ScrollToTop() {
 }
 
 export default function App() {
+  const { pathname } = useLocation();
+
+  if (pathname === "/admin") {
+    return (
+      <>
+        <ScrollToTop />
+        <Routes>
+          <Route path="/admin" element={<AdminPage />} />
+        </Routes>
+      </>
+    );
+  }
+
   return (
-    <>
+    <SiteProvider>
       <ScrollToTop />
       <PestCursor />
       <Header />
@@ -53,6 +68,6 @@ export default function App() {
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
       <Footer />
-    </>
+    </SiteProvider>
   );
 }

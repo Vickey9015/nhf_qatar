@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { company, slides } from "../config";
+import { slides } from "../config";
+import { useSite } from "../site-context";
 
 export default function Hero() {
+  const { company } = useSite();
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);

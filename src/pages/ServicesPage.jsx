@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { audiences, industryPages, pestPages } from "../catalog";
 import { industries, pests } from "../config";
 import { PageBanner, PageCta } from "../components/PageFrame";
@@ -9,6 +9,23 @@ const groups = [
   { id: "industries", label: "Industries" },
 ];
 
+const pestControl = [
+  { label: "Cockroach Control", hash: "residential-cockroaches" },
+  { label: "Bed Bug Treatment", hash: "residential-bed-bugs" },
+  { label: "Termite Control", hash: "residential-termites" },
+  { label: "Rat & Rodent Control", hash: "residential-rodents" },
+  { label: "Bird Control", hash: "residential-birds" },
+  { label: "Mosquito Control", hash: "residential-mosquitoes" },
+  { label: "Flying Insect Control", hash: "residential-flying-insects" },
+  { label: "Disinfection & Sanitization", hash: "residential-disinfection" },
+  { label: "General Pest Control", hash: "residential-general" },
+  { label: "Pre-Construction Termite Treatment", hash: "residential-pre-construction" },
+  { label: "Pest Control Across Qatar", hash: "residential-qatar" },
+  { label: "Ant Pest Control", hash: "residential-ants" },
+  { label: "Flies Management", hash: "residential-flies" },
+  { label: "Tick and Flea Management", hash: "residential-ticks" },
+];
+
 function groupFromHash(hash) {
   const id = hash.replace(/^#/, "");
   if (id === "commercial" || id.startsWith("commercial-")) return "commercial";
@@ -17,7 +34,7 @@ function groupFromHash(hash) {
 }
 
 const disinfection = {
-  menu: "Disinfection & sanitization",
+  menu: "Disinfection & Sanitization",
   image: "/images/solution-disinfect.jpg",
   lead: "A surface treatment for rooms that need a reset. It reaches handles, desks, switches, and the gaps a cloth misses. It does not replace ordinary cleaning.",
   points: [
@@ -131,6 +148,21 @@ export default function ServicesPage() {
             ))}
           </nav>
           <div className="service-panel">
+            <nav className="pest-control-list" aria-label="Pest control">
+              <h2>Pest control</h2>
+              <ul>
+                {pestControl.map((item) => (
+                  <li key={item.hash}>
+                    <Link
+                      to={`/services#${item.hash}`}
+                      className={hash === `#${item.hash}` ? "active" : ""}
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
             {active === "residential" ? (
               <ServiceGroup
                 id="residential"

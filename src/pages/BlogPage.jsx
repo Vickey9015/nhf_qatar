@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
-import { posts } from "../catalog";
 import { PageBanner } from "../components/PageFrame";
+import { useSite } from "../site-context";
 
 export default function BlogPage() {
+  const { posts } = useSite();
+
   return (
     <main>
       <PageBanner
