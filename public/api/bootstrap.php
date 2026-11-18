@@ -111,20 +111,44 @@ function database(): ?PDO
         return null;
     }
     $config = require $path;
-    try {
-        $pdo = new PDO(
-            "mysql:host=" . $config["host"] . ";dbname=" . $config["name"] . ";charset=utf8mb4",
-            (string) $config["user"],
-            (string) $config["pass"],
-            [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            ]
-        );
-    } catch (Throwable $error) {
-        json_response(["error" => "Could not connect to the database. Import nhf.sql, then check the database login."], 500);
+    $hosts = array_values(array_unique(array_filter([
+        (string) ($config["host"] ?? ""),
+        "localhost",
+        "127.0.0.1",
+    ])));
+    $passes = [(string) ($config["pass"] ?? "")];
+    if (str_starts_with($passes[0], "db-password-")) {
+        $passes[] = substr($passes[0], strlen("db-password-"));
     }
-    return $pdo;
+    $options = [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    ];
+    if (defined("PDO::MYSQL_ATTR_CONNECT_TIMEOUT")) {
+        $options[PDO::MYSQL_ATTR_CONNECT_TIMEOUT] = 5;
+    }
+    $last = "Could not connect to the database.";
+    foreach ($hosts as $host) {
+        foreach ($passes as $pass) {
+            try {
+                $pdo = new PDO(
+                    "mysql:host=" . $host . ";dbname=" . $config["name"] . ";charset=utf8mb4",
+                    (string) $config["user"],
+                    $pass,
+                    $options
+                );
+                return $pdo;
+            } catch (Throwable $error) {
+                $last = $error->getMessage();
+                foreach ($passes as $secret) {
+                    if ($secret !== "") {
+                        $last = str_replace($secret, "[hidden]", $last);
+                    }
+                }
+            }
+        }
+    }
+    json_response(["error" => $last], 500);
 }
 
 function auth_hash(): ?string

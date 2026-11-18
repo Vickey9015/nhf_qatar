@@ -73,7 +73,13 @@ export default function AdminPage() {
   useEffect(() => {
     let active = true;
     fetch("/api/auth.php", { credentials: "same-origin" })
-      .then((response) => (response.ok ? response.json() : Promise.reject()))
+      .then(async (response) => {
+        const data = await response.json().catch(() => null);
+        if (!response.ok || !data) {
+          throw new Error(data?.error || "The admin service did not respond.");
+        }
+        return data;
+      })
       .then((data) => {
         if (!active) return;
         setCsrf(data.csrf || "");
@@ -86,8 +92,10 @@ export default function AdminPage() {
         }
         setPhase(data.setupRequired ? "setup" : "login");
       })
-      .catch(() => {
-        if (active) setPhase("offline");
+      .catch((reason) => {
+        if (!active) return;
+        setError(reason.message || "The admin service did not respond.");
+        setPhase("offline");
       });
     return () => {
       active = false;
