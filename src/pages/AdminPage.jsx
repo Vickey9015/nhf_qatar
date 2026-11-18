@@ -31,6 +31,7 @@ export default function AdminPage() {
   const [settings, setSettings] = useState(null);
   const [notice, setNotice] = useState("");
   const [busy, setBusy] = useState(false);
+  const [navOpen, setNavOpen] = useState(false);
 
   useEffect(() => {
     const meta = document.createElement("meta");
@@ -286,41 +287,63 @@ export default function AdminPage() {
     );
   }
 
+  const sections = [
+    ["blogs", "Blogs", posts.length],
+    ["messages", "Messages", messages.length],
+    ["details", "Site details", null],
+  ];
+  const sectionTitle = sections.find(([id]) => id === tab)?.[1] || "Admin";
+
+  function openSection(id) {
+    setTab(id);
+    setDraft(null);
+    setError("");
+    setNotice("");
+    setNavOpen(false);
+  }
+
   return (
-    <main className="admin">
-      <div className="admin-top">
-        <h1>NHF admin</h1>
-        <button className="secondary" type="button" onClick={logout}>
+    <main className={`admin-shell${navOpen ? " nav-open" : ""}`}>
+      <aside className="admin-side">
+        <div className="admin-side-brand">
+          <img src="/logo.png" alt="" />
+          <div>
+            <strong>NHF Arabia</strong>
+            <span>Admin</span>
+          </div>
+        </div>
+        <nav>
+          {sections.map(([id, label, count]) => (
+            <button
+              className={tab === id ? "active" : ""}
+              key={id}
+              type="button"
+              onClick={() => openSection(id)}
+            >
+              {label}
+              {count === null ? null : <span>{count}</span>}
+            </button>
+          ))}
+        </nav>
+        <button className="admin-signout" type="button" onClick={logout}>
           Sign out
         </button>
-      </div>
-      <div className="admin-tabs">
-        {[
-          ["blogs", "Blogs"],
-          ["messages", "Messages"],
-          ["details", "Site details"],
-        ].map(([id, label]) => (
-          <button
-            className={tab === id ? "active" : ""}
-            key={id}
-            type="button"
-            onClick={() => {
-              setTab(id);
-              setDraft(null);
-              setError("");
-              setNotice("");
-            }}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-      <section className="admin-panel">
-        {error ? <p className="admin-error">{error}</p> : null}
-        {notice ? <p className="admin-ok">{notice}</p> : null}
-
-        {tab === "blogs" && !draft ? (
-          <>
+      </aside>
+      <section className="admin-main">
+        <header className="admin-head">
+          <div>
+            <button className="admin-menu" type="button" onClick={() => setNavOpen((open) => !open)}>
+              Menu
+            </button>
+            <h1>{draft ? "Edit blog" : sectionTitle}</h1>
+            <p>
+              {tab === "blogs" && !draft ? "Create and update the notes on the public blog." : null}
+              {tab === "blogs" && draft ? "Leave a blank line between paragraphs." : null}
+              {tab === "messages" ? "Messages sent from the contact form." : null}
+              {tab === "details" ? "Phone, email, and the lines shown across the site." : null}
+            </p>
+          </div>
+          {tab === "blogs" && !draft ? (
             <div className="admin-actions">
               <button type="button" onClick={() => setDraft(blankPost())}>
                 New blog
@@ -329,28 +352,37 @@ export default function AdminPage() {
                 View blog
               </a>
             </div>
-            <div className="admin-list">
-              {posts.map((post) => (
-                <article className="admin-item" key={post.slug}>
+          ) : null}
+        </header>
+        {error ? <p className="admin-error">{error}</p> : null}
+        {notice ? <p className="admin-ok">{notice}</p> : null}
+
+        {tab === "blogs" && !draft ? (
+          <div className="admin-stage">
+            {posts.length === 0 ? <p className="admin-empty">No blogs yet.</p> : null}
+            {posts.map((post) => (
+              <article className="admin-row" key={post.slug}>
+                <img src={post.image} alt="" />
+                <div>
                   <h2>{post.title}</h2>
                   <p className="admin-meta">/{post.slug}</p>
                   <p>{post.excerpt}</p>
-                  <div className="admin-row-actions">
-                    <button type="button" onClick={() => editPost(post)}>
-                      Edit
-                    </button>
-                    <button className="danger" type="button" onClick={() => deletePost(post.slug)}>
-                      Delete
-                    </button>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </>
+                </div>
+                <div className="admin-row-actions">
+                  <button type="button" onClick={() => editPost(post)}>
+                    Edit
+                  </button>
+                  <button className="danger" type="button" onClick={() => deletePost(post.slug)}>
+                    Delete
+                  </button>
+                </div>
+              </article>
+            ))}
+          </div>
         ) : null}
 
         {tab === "blogs" && draft ? (
-          <form onSubmit={savePost}>
+          <form className="admin-stage admin-form" onSubmit={savePost}>
             <label>
               Title
               <input
@@ -427,19 +459,22 @@ export default function AdminPage() {
         ) : null}
 
         {tab === "messages" ? (
-          <div className="admin-list">
-            {messages.length === 0 ? <p className="admin-lead">No messages yet.</p> : null}
+          <div className="admin-stage">
+            {messages.length === 0 ? <p className="admin-empty">No messages yet.</p> : null}
             {messages.map((item) => (
-              <article className="admin-message" key={item.id}>
-                <h2>{item.name}</h2>
-                <p className="admin-meta">
-                  {item.createdAt?.replace("T", " ").slice(0, 16)} · {item.phone}
-                  {item.email ? ` · ${item.email}` : ""}
-                </p>
-                <p>
-                  {[item.property, item.service].filter(Boolean).join(" · ")}
-                </p>
-                <p>{item.message}</p>
+              <article className="admin-row admin-message" key={item.id}>
+                <span className="admin-avatar" aria-hidden="true">
+                  {(item.name || "?").slice(0, 1).toUpperCase()}
+                </span>
+                <div>
+                  <h2>{item.name}</h2>
+                  <p className="admin-meta">
+                    {item.createdAt?.replace("T", " ").slice(0, 16)} · {item.phone}
+                    {item.email ? ` · ${item.email}` : ""}
+                  </p>
+                  <p>{[item.property, item.service].filter(Boolean).join(" · ")}</p>
+                  <p>{item.message}</p>
+                </div>
                 <div className="admin-row-actions">
                   <a className="admin-link" href={`tel:${item.phone}`}>
                     Call
@@ -459,7 +494,7 @@ export default function AdminPage() {
         ) : null}
 
         {tab === "details" && settings ? (
-          <form onSubmit={saveSettings}>
+          <form className="admin-stage admin-form" onSubmit={saveSettings}>
             {[
               ["phoneDisplay", "Phone"],
               ["email", "Info email"],
