@@ -14,16 +14,10 @@ const blankPost = () => ({
 function LoginFrame({ children }) {
   return (
     <main className="admin-login">
-      <aside className="admin-side">
-        <div className="admin-side-brand">
-          <img src="/logo.png" alt="" />
-          <div>
-            <strong>NHF Arabia</strong>
-            <span>Admin</span>
-          </div>
-        </div>
-      </aside>
-      <section className="admin-login-main">{children}</section>
+      <section className="admin-card">
+        <img className="admin-brand" src="/logo.png" alt="NHF Arabia" />
+        {children}
+      </section>
     </main>
   );
 }
@@ -248,9 +242,7 @@ export default function AdminPage() {
   if (phase === "loading") {
     return (
       <LoginFrame>
-        <section className="admin-card">
-          <p>Opening admin…</p>
-        </section>
+        <p>Opening admin…</p>
       </LoginFrame>
     );
   }
@@ -258,12 +250,10 @@ export default function AdminPage() {
   if (phase === "offline") {
     return (
       <LoginFrame>
-        <section className="admin-card">
-          <h1>Admin</h1>
-          <p className="admin-error">
-            {error || "This panel runs on the live site after the build is uploaded. PHP has to be available there."}
-          </p>
-        </section>
+        <h1>Admin</h1>
+        <p className="admin-error">
+          {error || "This panel runs on the live site after the build is uploaded. PHP has to be available there."}
+        </p>
       </LoginFrame>
     );
   }
@@ -271,7 +261,6 @@ export default function AdminPage() {
   if (phase === "setup" || phase === "login") {
     return (
       <LoginFrame>
-        <section className="admin-card">
           <h1>{phase === "setup" ? "Set the admin password" : "Admin sign in"}</h1>
           <p className="admin-lead">
             {phase === "setup"
@@ -297,7 +286,6 @@ export default function AdminPage() {
               </button>
             </div>
           </form>
-        </section>
       </LoginFrame>
     );
   }
