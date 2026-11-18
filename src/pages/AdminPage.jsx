@@ -11,6 +11,23 @@ const blankPost = () => ({
   paragraphsText: "",
 });
 
+function LoginFrame({ children }) {
+  return (
+    <main className="admin-login">
+      <aside className="admin-side">
+        <div className="admin-side-brand">
+          <img src="/logo.png" alt="" />
+          <div>
+            <strong>NHF Arabia</strong>
+            <span>Admin</span>
+          </div>
+        </div>
+      </aside>
+      <section className="admin-login-main">{children}</section>
+    </main>
+  );
+}
+
 function slugify(value) {
   return value
     .toLowerCase()
@@ -230,33 +247,31 @@ export default function AdminPage() {
 
   if (phase === "loading") {
     return (
-      <main className="admin">
+      <LoginFrame>
         <section className="admin-card">
           <p>Opening admin…</p>
         </section>
-      </main>
+      </LoginFrame>
     );
   }
 
   if (phase === "offline") {
     return (
-      <main className="admin">
+      <LoginFrame>
         <section className="admin-card">
-          <img className="admin-brand" src="/logo.png" alt="" />
           <h1>Admin</h1>
           <p className="admin-error">
             {error || "This panel runs on the live site after the build is uploaded. PHP has to be available there."}
           </p>
         </section>
-      </main>
+      </LoginFrame>
     );
   }
 
   if (phase === "setup" || phase === "login") {
     return (
-      <main className="admin">
+      <LoginFrame>
         <section className="admin-card">
-          <img className="admin-brand" src="/logo.png" alt="" />
           <h1>{phase === "setup" ? "Set the admin password" : "Admin sign in"}</h1>
           <p className="admin-lead">
             {phase === "setup"
@@ -283,7 +298,7 @@ export default function AdminPage() {
             </div>
           </form>
         </section>
-      </main>
+      </LoginFrame>
     );
   }
 
